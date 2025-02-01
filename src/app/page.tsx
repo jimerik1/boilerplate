@@ -1,45 +1,47 @@
+// src/app/page.tsx
 import Link from "next/link";
-
-import { LatestPost } from "~/app/_components/post";
 import { auth } from "~/server/auth";
-import { api, HydrateClient } from "~/trpc/server";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
   const session = await auth();
-
+  
+  // Redirect authenticated users to dashboard
   if (session?.user) {
-    void api.post.getLatest.prefetch();
+    redirect("/dashboard");
   }
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          Boilerplate
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-
-            <div className="flex flex-col items-center justify-center gap-4">
-              <p className="text-center text-2xl text-white">
-                {session && <span>Logged in as {session.user?.name}</span>}
-              </p>
-              <Link
-                href={session ? "/api/auth/signout" : "/api/auth/signin"}
-                className="rounded-full bg-white/10 px-10 py-3 font-semibold no-underline transition hover:bg-white/20"
-              >
-                {session ? "Sign out" : "Sign in"}
-              </Link>
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+        <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
+          Welcome to <span className="text-purple-400">Your App</span>
+        </h1>
+        
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+          <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
+            <h3 className="text-2xl font-bold">Feature 1</h3>
+            <div className="text-lg">
+              Description of your first amazing feature
             </div>
           </div>
-
-          {session?.user && <LatestPost />}
+          <div className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20">
+            <h3 className="text-2xl font-bold">Feature 2</h3>
+            <div className="text-lg">
+              Description of your second amazing feature
+            </div>
+          </div>
         </div>
-      </main>
-    </HydrateClient>
+
+        <div className="flex flex-col items-center gap-2">
+          <Link
+            href="/api/auth/signin"
+            className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20"
+          >
+            Sign in to get started
+          </Link>
+        </div>
+      </div>
+    </main>
   );
 }
