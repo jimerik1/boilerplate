@@ -12,8 +12,6 @@ export default async function Dashboard() {
     redirect("/");
   }
 
-  const hello = await api.post.hello({ text: "from tRPC" });
-
   return (
     <DashboardLayout session={session}>
       <div className="flex flex-col gap-4">
@@ -22,7 +20,6 @@ export default async function Dashboard() {
             Welcome back, {session.user.name}!
           </h2>
           <p className="text-gray-500 dark:text-white">
-            {hello ? hello.greeting : "Loading tRPC query..."}
           </p>
         </div>
         

@@ -15,17 +15,34 @@ datasource db {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id         Int       @id @default(autoincrement())
+  name       String    // the message content (you might want to rename this to "content")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  editedAt   DateTime? // null if never edited
 
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
+  // Self-referencing relation to support replies (threaded messages)
+  parentId   Int?
+  parent     Post?     @relation("Replies", fields: [parentId], references: [id])
+  replies    Post[]    @relation("Replies")
 
-    @@index([name])
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdById String
+
+  @@index([name])
+  PostLike PostLike[]
 }
 
+model PostLike {
+  id        Int      @id @default(autoincrement())
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+}
 // Necessary for Next auth
 model Account {
     id                       String  @id @default(cuid())
@@ -63,6 +80,8 @@ model User {
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+
+    PostLike PostLike[]
 }
 
 model VerificationToken {
