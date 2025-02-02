@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { type Session } from "next-auth";
 import { useTheme } from "~/app/_components/theme/theme-provider";
+import { Chat } from "../chat/Chat";
 
 interface Navigation {
   name: string;
@@ -321,7 +322,9 @@ export function DashboardLayout({ children, session }: DashboardLayoutProps) {
                       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
                         Chat
                       </h3>
-                      {/* Add your chat component here */}
+                      <div className="p-6 h-full">
+                        <Chat />
+                        </div>
                     </div>
                   </div>
                 </div>
